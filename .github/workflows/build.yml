@@ -70,9 +70,11 @@ jobs:
           # run compressonator
 
       - name: Configure CMake
+        working-directory: compressonator
         run: cmake -G "Ninja" -B out -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_CMP_SDK=ON -DOPTION_BUILD_KTX2=OFF -DOPTION_BUILD_EXR=OFF -DOPTION_BUILD_GUI=OFF -DOPTION_CMP_DIRECTX=OFF -DOPTION_CMP_VULKAN=OFF -DOPTION_CMP_OPENGL=OFF -DOPTION_CMP_QT=OFF -DOPTION_CMP_OPENCV=OFF -DOPTION_BUILD_BROTLIG=OFF -DOPTION_BUILD_INTERNAL_CMP_TEST=OFF
 
       - name: Build
+        working-directory: compressonator
         run: cmake --build out --config ${{matrix.build_type}}
 
       - name: Upload
@@ -80,5 +82,5 @@ jobs:
         with:
           name: 'Compressonator-${{matrix.os.name}}-${{matrix.build_type}}'
           path: |
-            out/*
+            compressonator/out/*
           retention-days: 7

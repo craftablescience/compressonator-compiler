@@ -28,24 +28,33 @@ jobs:
           arch: x64
           spectre: true
 
+      - name: Install Dependencies [Windows]
+        if: matrix.os.id == 'windows-latest'
+        run: |
+          # run compressonator
+
       - name: Install Dependencies [macOS]
         if: matrix.os.id == 'macos-latest'
-        run: brew install ninja
+        run: |
+          brew install ninja
+          # run compressonator
 
       - name: Install Dependencies [Linux]
         if: matrix.os.id == 'ubuntu-latest'
-        run: sudo apt update && sudo apt install -y ninja-build
+        run: |
+          sudo apt update && sudo apt install -y ninja-build
+          # run compressonator
 
       - name: Configure CMake
-        run: cmake -G "Ninja" -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_KTX2=OFF -DOPTION_BUILD_EXR=OFF -DOPTION_BUILD_GUI=OFF -DOPTION_CMP_DIRECTX=OFF -DOPTION_CMP_VULKAN=OFF -DOPTION_CMP_OPENGL=OFF -DOPTION_CMP_QT=OFF -DOPTION_CMP_OPENCV=OFF -DOPTION_BUILD_INTERNAL_CMP_TEST=OFF
+        run: cmake -G "Ninja" -B out -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_CMP_SDK=ON -DOPTION_BUILD_KTX2=OFF -DOPTION_BUILD_EXR=OFF -DOPTION_BUILD_GUI=OFF -DOPTION_CMP_DIRECTX=OFF -DOPTION_CMP_VULKAN=OFF -DOPTION_CMP_OPENGL=OFF -DOPTION_CMP_QT=OFF -DOPTION_CMP_OPENCV=OFF -DOPTION_BUILD_INTERNAL_CMP_TEST=OFF
 
       - name: Build
-        run: cmake --build build --config ${{matrix.build_type}}
+        run: cmake --build out --config ${{matrix.build_type}}
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: 'Compressonator-${{matrix.os.name}}-${{matrix.build_type}}'
           path: |
-            build/*
+            out/*
           retention-days: 7

@@ -1,0 +1,51 @@
+name: Build
+on:
+  workflow_dispatch:
+  # nothing here
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - { id: windows-latest, name: Windows }
+          - { id: ubuntu-latest, name: Linux }
+          - { id: macos-latest, name: macOS }
+        build_type: [Debug, Release]
+    runs-on: ${{matrix.os.id}}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'GPUOpen-Tools/compressonator'
+          submodules: recursive
+
+      - name: Set up MSVC [Windows]
+        if: matrix.os.id == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          spectre: true
+
+      - name: Install Dependencies [macOS]
+        if: matrix.os.id == 'macos-latest'
+        run: brew install ninja
+
+      - name: Install Dependencies [Linux]
+        if: matrix.os.id == 'ubuntu-latest'
+        run: sudo apt update && sudo apt install -y ninja-build
+
+      - name: Configure CMake
+        run: cmake -G "Ninja" -B build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_KTX2=OFF -DOPTION_BUILD_EXR=OFF -DOPTION_BUILD_GUI=OFF -DOPTION_CMP_DIRECTX=OFF -DOPTION_CMP_VULKAN=OFF -DOPTION_CMP_OPENGL=OFF -DOPTION_CMP_QT=OFF -DOPTION_CMP_OPENCV=OFF -DOPTION_BUILD_INTERNAL_CMP_TEST=OFF
+
+      - name: Build
+        run: cmake --build build --config ${{matrix.build_type}}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Compressonator-${{matrix.os.name}}-${{matrix.build_type}}'
+          path: |
+            build/*
+          retention-days: 7

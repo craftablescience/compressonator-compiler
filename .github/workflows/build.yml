@@ -21,8 +21,29 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          repository: 'GPUOpen-Tools/compressonator'
           submodules: recursive
+
+      - name: Checkout Compressonator
+        uses: actions/checkout@v4
+        with:
+          repository: 'GPUOpen-Tools/compressonator'
+          path: 'compressonator'
+          submodules: recursive
+
+      - name: Checkout GLM
+        uses: actions/checkout@v4
+        with:
+          repository: 'g-truc/glm'
+          path: 'common/glm'
+          submodules: recursive
+
+      - name: Patch Compressonator GLM CMake [Windows]
+        if: matrix.os.id == 'windows-latest'
+        run: 'Copy-Item -Path patches/glm.cmake -Destination compressonator/external/glm/CMakeLists.txt'
+
+      - name: Patch Compressonator GLM CMake [Linux / macOS]
+        if: matrix.os.id == 'ubuntu-latest' || matrix.os.id == 'macos-latest'
+        run: 'cp patches/glm.cmake compressonator/external/glm/CMakeLists.txt'
 
       - name: Set up MSVC [Windows]
         if: matrix.os.id == 'windows-latest'
@@ -36,16 +57,16 @@ jobs:
         run: |
           # run compressonator
 
-      - name: Install Dependencies [macOS]
-        if: matrix.os.id == 'macos-latest'
-        run: |
-          brew install ninja
-          # run compressonator
-
       - name: Install Dependencies [Linux]
         if: matrix.os.id == 'ubuntu-latest'
         run: |
           sudo apt update && sudo apt install -y ninja-build
+          # run compressonator
+
+      - name: Install Dependencies [macOS]
+        if: matrix.os.id == 'macos-latest'
+        run: |
+          brew install ninja
           # run compressonator
 
       - name: Configure CMake

@@ -50,7 +50,7 @@ file(GLOB_RECURSE CMP_SRCS
 )
 
 function(create_cmp_compressonator_library SUFFIX)
-    add_library(CMP_Compressonator${SUFFIX}
+    add_library(Compressonator${SUFFIX}
             STATIC
             version.h
             common.h
@@ -58,7 +58,7 @@ function(create_cmp_compressonator_library SUFFIX)
             compressonator.h
             compressonator.cpp
             ${CMP_SRCS})
-    target_include_directories(CMP_Compressonator${SUFFIX}
+    target_include_directories(Compressonator${SUFFIX}
             PUBLIC
             ./
             # Lossy Compression
@@ -84,7 +84,7 @@ function(create_cmp_compressonator_library SUFFIX)
             ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math/
     )
     set_target_properties(CMP_Compressonator${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
-    target_link_libraries(CMP_Compressonator${SUFFIX} PUBLIC CMP_Core)
+    target_link_libraries(CMP_Compressonator${SUFFIX} PUBLIC CMP_Core${SUFFIX})
 endfunction()
 
 if(NOT WIN32)
@@ -92,13 +92,13 @@ if(NOT WIN32)
 else()
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         create_cmp_compressonator_library("_MDd")
-        set_property(TARGET "CMP_Compressonator_MDd" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+        set_property(TARGET "Compressonator_MDd" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
         create_cmp_compressonator_library("_MTd")
-        set_property(TARGET "CMP_Compressonator_MTd" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+        set_property(TARGET "Compressonator_MTd" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
     else()
         create_cmp_compressonator_library("_MD")
-        set_property(TARGET "CMP_Compressonator_MD" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+        set_property(TARGET "Compressonator_MD" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
         create_cmp_compressonator_library("_MT")
-        set_property(TARGET "CMP_Compressonator_MT" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
+        set_property(TARGET "Compressonator_MT" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
     endif()
 endif()

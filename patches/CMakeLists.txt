@@ -115,7 +115,7 @@ set(OPTION_BUILD_APPS_CMP_EXAMPLES  OFF)
 
 # Minimum Lib Dependencies for CLI, GUI, and SDK (GUI has additional lib requirements added later in this cmake)
 set(LIB_BUILD_COMPRESSONATOR_SDK    ON)
-set(LIB_BUILD_FRAMEWORK_SDK         ON)
+set(LIB_BUILD_FRAMEWORK_SDK         OFF)
 set(LIB_BUILD_IMAGEIO               OFF)
 set(LIB_BUILD_ANALYSIS              OFF)
 set(LIB_BUILD_COMMON                OFF)
@@ -225,5 +225,4 @@ endif()
 # These are the minimum build includes for both Windows / Linux / Mac application builds
 # Libs common to all OS
 add_subdirectory(cmp_core)
-add_subdirectory(cmp_framework)
 add_subdirectory(cmp_compressonatorlib)

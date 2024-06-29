@@ -149,9 +149,9 @@ jobs:
 
       - name: Unzip Artifacts
         run: |
-          unzip -o win_x86_64/*.zip   -d dest/lib/win_x86_64
-          unzip -o linux_x86_64/*.zip -d dest/lib/linux_x86_64
-          unzip -o osx_arm64/*.zip    -d dest/lib/osx_arm64
+          unzip -o "win_x86_64/*.zip"   -d dest/lib/win_x86_64
+          unzip -o "linux_x86_64/*.zip" -d dest/lib/linux_x86_64
+          unzip -o "osx_arm64/*.zip"    -d dest/lib/osx_arm64
 
       - name: Upload Release
         uses: actions/upload-artifact@v4

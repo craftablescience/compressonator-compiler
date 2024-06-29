@@ -115,8 +115,10 @@ jobs:
           mkdir dest/lib/linux_x86_64
           mkdir dest/lib/osx_arm64
 
-      - name: Copy Header
-        run: cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/
+      - name: Copy Header & License
+        run: |
+          cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/
+          cp compressonator/license/license.txt dest/LICENSE
 
       - name: Download Artifacts
         uses: actions/github-script@v7

@@ -162,4 +162,5 @@ jobs:
           path: |
             dest/include/
             dest/lib/
+            dest/LICENSE
           retention-days: 7

@@ -42,16 +42,18 @@ function(create_cmp_core_library SUFFIX)
     )
 
     if (UNIX)
-        target_compile_definitions(CMP_Core${SUFFIX} PRIVATE _LINUX)
-        if(NOT APPLE)
-            target_compile_definitions(CMP_Core${SUFFIX} PRIVATE ASPM_GPU)
-        endif()
+        target_compile_definitions(CMP_Core${SUFFIX} PRIVATE _LINUX ASPM_GPU)
     endif()
 
     set_target_properties(CMP_Core${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
     # Core SIMD options
-    if(NOT APPLE)
+    if(APPLE)
+        # hack to avoid missing functions at link time
+        target_sources(CMP_Core${SUFFIX}
+                PRIVATE
+                source/core_simd_apple.cpp)
+    else()
 
         # SSE
         add_library(CMP_Core${SUFFIX}_SSE STATIC)

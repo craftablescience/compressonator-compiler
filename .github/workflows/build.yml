@@ -34,6 +34,7 @@ jobs:
         if: matrix.os.id == 'windows-latest'
         run: |
           Copy-Item -Path patches/cmp_compressonatorlib/CMakeLists.txt -Destination compressonator/cmp_compressonatorlib/CMakeLists.txt
+          Copy-Item -Path patches/cmp_core/source/core_simd_apple.cpp  -Destination compressonator/cmp_core/source/core_simd_apple.cpp
           Copy-Item -Path patches/cmp_core/CMakeLists.txt              -Destination compressonator/cmp_core/CMakeLists.txt
           Copy-Item -Path patches/external/glm/CMakeLists.txt          -Destination compressonator/external/glm/CMakeLists.txt
           Copy-Item -Path patches/CMakeLists.txt                       -Destination compressonator/CMakeLists.txt
@@ -42,6 +43,7 @@ jobs:
         if: matrix.os.id == 'ubuntu-latest' || matrix.os.id == 'macos-latest'
         run: |
           cp patches/cmp_compressonatorlib/CMakeLists.txt compressonator/cmp_compressonatorlib/CMakeLists.txt
+          cp patches/cmp_core/source/core_simd_apple.cpp  compressonator/cmp_core/source/core_simd_apple.cpp
           cp patches/cmp_core/CMakeLists.txt              compressonator/cmp_core/CMakeLists.txt
           cp patches/external/glm/CMakeLists.txt          compressonator/external/glm/CMakeLists.txt
           cp patches/CMakeLists.txt                       compressonator/CMakeLists.txt

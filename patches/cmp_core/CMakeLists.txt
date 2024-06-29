@@ -47,43 +47,46 @@ endif()
 set_target_properties(CMP_Core PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
 # Core SIMD options
+if(NOT APPLE)
 
-# SSE
-add_library(CMP_Core_SSE STATIC)
-target_sources(CMP_Core_SSE PRIVATE source/core_simd_sse.cpp)
-target_include_directories(CMP_Core_SSE PRIVATE source shaders)
+    # SSE
+    add_library(CMP_Core_SSE STATIC)
+    target_sources(CMP_Core_SSE PRIVATE source/core_simd_sse.cpp)
+    target_include_directories(CMP_Core_SSE PRIVATE source shaders)
 
-if (UNIX AND NOT APPLE)
-    target_compile_options(CMP_Core_SSE PRIVATE -march=nehalem)
+    if (UNIX)
+        target_compile_options(CMP_Core_SSE PRIVATE -march=nehalem)
+    endif()
+
+    set_target_properties(CMP_Core_SSE PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
+
+    # AVX
+    add_library(CMP_Core_AVX STATIC)
+    target_sources(CMP_Core_AVX PRIVATE source/core_simd_avx.cpp)
+    target_include_directories(CMP_Core_AVX PRIVATE source shaders)
+
+    if (WIN32)
+        target_compile_options(CMP_Core_AVX PRIVATE /arch:AVX2)
+    else()
+        target_compile_options(CMP_Core_AVX PRIVATE -march=haswell)
+    endif()
+
+    set_target_properties(CMP_Core_AVX PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
+
+    # AVX-512
+    add_library(CMP_Core_AVX512 STATIC)
+    target_sources(CMP_Core_AVX512 PRIVATE source/core_simd_avx512.cpp)
+    target_include_directories(CMP_Core_AVX512 PRIVATE source shaders)
+
+    if (WIN32)
+        target_compile_options(CMP_Core_AVX512 PRIVATE /arch:AVX-512)
+    else()
+        target_compile_options(CMP_Core_AVX512 PRIVATE -march=knl)
+    endif()
+
+    set_target_properties(CMP_Core_AVX512 PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
+
+    # Link SIMD libraries to CMP_Core
+    target_link_libraries(CMP_Core PRIVATE CMP_Core_SSE CMP_Core_AVX CMP_Core_AVX512)
+
 endif()
-
-set_target_properties(CMP_Core_SSE PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
-
-# AVX
-add_library(CMP_Core_AVX STATIC)
-target_sources(CMP_Core_AVX PRIVATE source/core_simd_avx.cpp)
-target_include_directories(CMP_Core_AVX PRIVATE source shaders)
-
-if (WIN32)
-    target_compile_options(CMP_Core_AVX PRIVATE /arch:AVX2)
-elseif(NOT APPLE)
-    target_compile_options(CMP_Core_AVX PRIVATE -march=haswell)
-endif()
-
-set_target_properties(CMP_Core_AVX PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
-
-# AVX-512
-add_library(CMP_Core_AVX512 STATIC)
-target_sources(CMP_Core_AVX512 PRIVATE source/core_simd_avx512.cpp)
-target_include_directories(CMP_Core_AVX512 PRIVATE source shaders)
-
-if (WIN32)
-    target_compile_options(CMP_Core_AVX512 PRIVATE /arch:AVX-512)
-elseif(NOT APPLE)
-    target_compile_options(CMP_Core_AVX512 PRIVATE -march=knl)
-endif()
-
-set_target_properties(CMP_Core_AVX512 PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
-
-# Link SIMD libraries to CMP_Core
-target_link_libraries(CMP_Core PRIVATE CMP_Core_SSE CMP_Core_AVX CMP_Core_AVX512)

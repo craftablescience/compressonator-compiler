@@ -38,15 +38,17 @@ jobs:
           path: 'common/lib/ext/glm'
           submodules: recursive
 
-      - name: Patch Compressonator GLM CMake [Windows]
+      - name: Patch Compressonator [Windows]
         if: matrix.os.id == 'windows-latest'
         run: |
+          Copy-Item -Path patches/cmp_core/CMakeLists.txt     -Destination compressonator/cmp_core/CMakeLists.txt
           Copy-Item -Path patches/external/glm/CMakeLists.txt -Destination compressonator/external/glm/CMakeLists.txt
           Copy-Item -Path patches/CMakeLists.txt              -Destination compressonator/CMakeLists.txt
 
-      - name: Patch Compressonator GLM CMake [Linux / macOS]
+      - name: Patch Compressonator [Linux / macOS]
         if: matrix.os.id == 'ubuntu-latest' || matrix.os.id == 'macos-latest'
         run: |
+          cp patches/cmp_core/CMakeLists.txt     compressonator/cmp_core/CMakeLists.txt
           cp patches/external/glm/CMakeLists.txt compressonator/external/glm/CMakeLists.txt
           cp patches/CMakeLists.txt              compressonator/CMakeLists.txt
 
@@ -69,11 +71,11 @@ jobs:
 
       - name: Configure CMake
         working-directory: compressonator
-        run: cmake -G "Ninja" -B out -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DOPTION_ENABLE_ALL_APPS=OFF -DOPTION_BUILD_CMP_SDK=ON -DOPTION_BUILD_KTX2=OFF -DOPTION_BUILD_EXR=OFF -DOPTION_BUILD_GUI=OFF -DOPTION_CMP_DIRECTX=OFF -DOPTION_CMP_VULKAN=OFF -DOPTION_CMP_OPENGL=OFF -DOPTION_CMP_QT=OFF -DOPTION_CMP_OPENCV=OFF -DOPTION_BUILD_BROTLIG=OFF -DOPTION_BUILD_INTERNAL_CMP_TEST=OFF
+        run: cmake -G "Ninja" -B cmake-build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
 
       - name: Build
         working-directory: compressonator
-        run: cmake --build out --config ${{matrix.build_type}}
+        run: cmake --build cmake-build --config ${{matrix.build_type}}
 
       - name: Upload
         uses: actions/upload-artifact@v4

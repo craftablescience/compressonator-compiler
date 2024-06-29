@@ -116,7 +116,7 @@ jobs:
           mkdir dest/lib/osx_arm64
 
       - name: Copy Header
-        run: cp cmp_compressonatorlib/compressonator.h dest/include/
+        run: cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/
 
       - name: Download Artifacts
         uses: actions/github-script@v7

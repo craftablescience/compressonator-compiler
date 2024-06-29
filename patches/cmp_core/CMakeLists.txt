@@ -42,7 +42,10 @@ function(create_cmp_core_library SUFFIX)
     )
 
     if (UNIX)
-        target_compile_definitions(CMP_Core${SUFFIX} PRIVATE _LINUX ASPM_GPU)
+        target_compile_definitions(CMP_Core${SUFFIX} PRIVATE _LINUX)
+        if(NOT APPLE)
+            target_compile_definitions(CMP_Core${SUFFIX} PRIVATE ASPM_GPU)
+        endif()
     endif()
 
     set_target_properties(CMP_Core${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})

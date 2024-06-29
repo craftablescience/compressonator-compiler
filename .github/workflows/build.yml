@@ -6,9 +6,6 @@ on:
   workflow_dispatch:
   # nothing here
 
-env:
-  COMPRESSONATOR_REF: 'f4b53d79ec5abbb50924f58aebb7bf2793200b94' # Latest as of 6/29/2024
-
 jobs:
   build:
     strategy:
@@ -24,14 +21,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-
-      - name: Checkout Compressonator
-        uses: actions/checkout@v4
-        with:
-          repository: 'GPUOpen-Tools/compressonator'
-          ref: '${{env.COMPRESSONATOR_REF}}'
-          path: 'compressonator'
           submodules: recursive
 
       - name: Checkout GLM
@@ -98,14 +87,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-
-      - name: Checkout Compressonator
-        uses: actions/checkout@v4
-        with:
-          repository: 'GPUOpen-Tools/compressonator'
-          ref: '${{env.COMPRESSONATOR_REF}}'
-          path: 'compressonator'
           submodules: recursive
 
       - name: Create Destination Directories

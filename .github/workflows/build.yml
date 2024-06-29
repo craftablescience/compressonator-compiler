@@ -95,6 +95,11 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Checkout Compressonator
         uses: actions/checkout@v4
         with:

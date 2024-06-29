@@ -222,6 +222,8 @@ else()
     set(OpenGL_GL_PREFERENCE "GLVND")
 endif()
 
+set(CMAKE_DEBUG_POSTFIX "d")
+
 # These are the minimum build includes for both Windows / Linux / Mac application builds
 # Libs common to all OS
 add_subdirectory(cmp_core)

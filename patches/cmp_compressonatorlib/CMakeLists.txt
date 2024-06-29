@@ -83,8 +83,8 @@ function(create_cmp_compressonator_library SUFFIX)
             ${PROJECT_SOURCE_DIR}/applications/_plugins/common
             ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math/
     )
-    set_target_properties(CMP_Compressonator${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
-    target_link_libraries(CMP_Compressonator${SUFFIX} PUBLIC CMP_Core${SUFFIX})
+    set_target_properties(Compressonator${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
+    target_link_libraries(Compressonator${SUFFIX} PUBLIC CMP_Core${SUFFIX})
 endfunction()
 
 if(NOT WIN32)

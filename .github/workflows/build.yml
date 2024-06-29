@@ -117,7 +117,7 @@ jobs:
 
       - name: Copy Header & License
         run: |
-          cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/
+          cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/Compressonator.h
           cp compressonator/license/license.txt dest/LICENSE
 
       - name: Download Artifacts

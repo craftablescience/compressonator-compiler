@@ -1,7 +1,3 @@
-#
-# Patches "external/glm/CMakeLists.txt"
-#
-
 message(STATUS "++++++++++++++++++ External-GLM" )
 
 # -------------------------------------------------------------------------
@@ -20,5 +16,5 @@ target_include_directories(ExtGLEW INTERFACE
 
 # Enable this for newer GLM libs (using older version 0.9.8.0 is been used)
 target_link_libraries(ExtGLM INTERFACE
-    glm::glm
+        glm::glm
 )

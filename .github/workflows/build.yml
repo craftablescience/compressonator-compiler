@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'GPUOpen-Tools/compressonator'
+          ref: 'f4b53d79ec5abbb50924f58aebb7bf2793200b94' # Latest as of 6/29/2024
           path: 'compressonator'
           submodules: recursive
 
@@ -39,11 +40,15 @@ jobs:
 
       - name: Patch Compressonator GLM CMake [Windows]
         if: matrix.os.id == 'windows-latest'
-        run: 'Copy-Item -Path patches/glm.cmake -Destination compressonator/external/glm/CMakeLists.txt'
+        run: |
+          Copy-Item -Path patches/external/glm/CMakeLists.txt -Destination compressonator/external/glm/CMakeLists.txt
+          Copy-Item -Path patches/CMakeLists.txt              -Destination compressonator/CMakeLists.txt
 
       - name: Patch Compressonator GLM CMake [Linux / macOS]
         if: matrix.os.id == 'ubuntu-latest' || matrix.os.id == 'macos-latest'
-        run: 'cp patches/glm.cmake compressonator/external/glm/CMakeLists.txt'
+        run: |
+          cp patches/external/glm/CMakeLists.txt compressonator/external/glm/CMakeLists.txt
+          cp patches/CMakeLists.txt              compressonator/CMakeLists.txt
 
       - name: Set up MSVC [Windows]
         if: matrix.os.id == 'windows-latest'

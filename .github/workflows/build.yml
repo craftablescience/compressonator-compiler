@@ -109,16 +109,18 @@ jobs:
           mkdir linux_x86_64
           mkdir osx_arm64
           mkdir dest
+          mkdir dest/cmake
           mkdir dest/include
           mkdir dest/lib
           mkdir dest/lib/win_x86_64
           mkdir dest/lib/linux_x86_64
           mkdir dest/lib/osx_arm64
 
-      - name: Copy Header & License
+      - name: Copy Files
         run: |
+          cp cmake/TargetLinkCompressonator.cmake                  dest/cmake
           cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/Compressonator.h
-          cp compressonator/license/license.txt dest/LICENSE
+          cp compressonator/license/license.txt                    dest/LICENSE
 
       - name: Download Artifacts
         uses: actions/github-script@v7
@@ -160,6 +162,7 @@ jobs:
         with:
           name: Compressonator
           path: |
+            dest/cmake/
             dest/include/
             dest/lib/
             dest/LICENSE

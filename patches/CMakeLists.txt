@@ -106,7 +106,7 @@ endif()
 #  do     set(OPTION_BUILD_CMP_SDK ON)
 #  so that user preference is $CACHE{OPTION_BUILD_CMP_SDK} and the actual value is ${OPTION_BUILD_CMP_SDK}
 #---------------------------------------------------------------------------------
-set(OPTION_ENABLE_ALL_APPS          OFF) # TODO rename to OPTION_BUILD_ALL
+set(OPTION_ENABLE_ALL_APPS          OFF)
 set(OPTION_BUILD_CMP_SDK            ON)
 set(OPTION_BUILD_APPS_CMP_CLI       OFF)
 set(OPTION_BUILD_APPS_CMP_GUI       OFF)

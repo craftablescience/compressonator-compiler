@@ -41,16 +41,18 @@ jobs:
       - name: Patch Compressonator [Windows]
         if: matrix.os.id == 'windows-latest'
         run: |
-          Copy-Item -Path patches/cmp_core/CMakeLists.txt     -Destination compressonator/cmp_core/CMakeLists.txt
-          Copy-Item -Path patches/external/glm/CMakeLists.txt -Destination compressonator/external/glm/CMakeLists.txt
-          Copy-Item -Path patches/CMakeLists.txt              -Destination compressonator/CMakeLists.txt
+          Copy-Item -Path patches/cmp_compressonatorlib/CMakeLists.txt -Destination compressonator/cmp_compressonatorlib/CMakeLists.txt
+          Copy-Item -Path patches/cmp_core/CMakeLists.txt              -Destination compressonator/cmp_core/CMakeLists.txt
+          Copy-Item -Path patches/external/glm/CMakeLists.txt          -Destination compressonator/external/glm/CMakeLists.txt
+          Copy-Item -Path patches/CMakeLists.txt                       -Destination compressonator/CMakeLists.txt
 
       - name: Patch Compressonator [Linux / macOS]
         if: matrix.os.id == 'ubuntu-latest' || matrix.os.id == 'macos-latest'
         run: |
-          cp patches/cmp_core/CMakeLists.txt     compressonator/cmp_core/CMakeLists.txt
-          cp patches/external/glm/CMakeLists.txt compressonator/external/glm/CMakeLists.txt
-          cp patches/CMakeLists.txt              compressonator/CMakeLists.txt
+          cp patches/cmp_compressonatorlib/CMakeLists.txt compressonator/cmp_compressonatorlib/CMakeLists.txt
+          cp patches/cmp_core/CMakeLists.txt              compressonator/cmp_core/CMakeLists.txt
+          cp patches/external/glm/CMakeLists.txt          compressonator/external/glm/CMakeLists.txt
+          cp patches/CMakeLists.txt                       compressonator/CMakeLists.txt
 
       - name: Set up MSVC [Windows]
         if: matrix.os.id == 'windows-latest'

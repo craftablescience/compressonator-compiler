@@ -118,8 +118,8 @@ jobs:
 
       - name: Copy Files
         run: |
-          cp cmake/TargetLinkCompressonator.cmake                  dest/cmake
           cp compressonator/cmp_compressonatorlib/compressonator.h dest/include/Compressonator.h
+          cp CMakeLists.txt                                        dest/
           cp compressonator/license/license.txt                    dest/LICENSE
 
       - name: Download Artifacts
@@ -162,8 +162,8 @@ jobs:
         with:
           name: Compressonator
           path: |
-            dest/cmake/
             dest/include/
             dest/lib/
+            dest/CMakeLists.txt
             dest/LICENSE
           retention-days: 7

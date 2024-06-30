@@ -36,6 +36,9 @@ if (NOT CMP_VERSION_BUILD_NUMBER)
     set(CMP_VERSION_BUILD_NUMBER 0)
 endif()
 
+# Needs to be above project()
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
 project(Compressonator VERSION ${CMP_VERSION_MAJOR}.${CMP_VERSION_MINOR})
 message("Building Compressonator version ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
@@ -56,8 +59,6 @@ elseif(CMP_HOST_LINUX)
     add_compile_options(-Wall)
     #    add_compile_options(-Wall -Werror)
 endif()
-
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 # ------------------------------------
 # Visual Studio project folder names

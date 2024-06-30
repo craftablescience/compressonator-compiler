@@ -57,6 +57,8 @@ elseif(CMP_HOST_LINUX)
     #    add_compile_options(-Wall -Werror)
 endif()
 
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
 # ------------------------------------
 # Visual Studio project folder names
 # ------------------------------------

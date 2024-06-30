@@ -95,14 +95,14 @@ jobs:
         run: |
           mkdir win_x86_64
           mkdir linux_x86_64
-          mkdir osx_arm64
+          mkdir macOS
           mkdir dest
           mkdir dest/cmake
           mkdir dest/include
           mkdir dest/lib
           mkdir dest/lib/win_x86_64
           mkdir dest/lib/linux_x86_64
-          mkdir dest/lib/osx_arm64
+          mkdir dest/lib/macOS
 
       - name: Copy Files
         run: |
@@ -135,7 +135,7 @@ jobs:
             for (const artifact of macOSArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                fs.writeFileSync(`${{github.workspace}}/osx_arm64/${artifact.name}.zip`, Buffer.from(download.data));
+                fs.writeFileSync(`${{github.workspace}}/macOS/${artifact.name}.zip`, Buffer.from(download.data));
             }
             console.log("Artifact download complete!");
 
@@ -143,7 +143,7 @@ jobs:
         run: |
           unzip -o "win_x86_64/*.zip"   -d dest/lib/win_x86_64
           unzip -o "linux_x86_64/*.zip" -d dest/lib/linux_x86_64
-          unzip -o "osx_arm64/*.zip"    -d dest/lib/osx_arm64
+          unzip -o "macOS/*.zip"        -d dest/lib/macOS
 
       - name: Upload Release
         uses: actions/upload-artifact@v4

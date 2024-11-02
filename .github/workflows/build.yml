@@ -132,7 +132,11 @@ jobs:
             for (const artifact of windowsArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                fs.writeFileSync(`${{github.workspace}}/win_x86_64/${artifact.name}.zip`, Buffer.from(download.data));
+                if (artifact.name.endsWith('(ASan)')) {
+                    fs.writeFileSync(`${{github.workspace}}/win_x86_64_asan/${artifact.name}.zip`, Buffer.from(download.data));
+                } else {
+                    fs.writeFileSync(`${{github.workspace}}/win_x86_64/${artifact.name}.zip`, Buffer.from(download.data));
+                }
             }
             for (const artifact of linuxArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
@@ -148,9 +152,10 @@ jobs:
 
       - name: Unzip Artifacts
         run: |
-          unzip -o "win_x86_64/*.zip"   -d dest/lib/win_x86_64
-          unzip -o "linux_x86_64/*.zip" -d dest/lib/linux_x86_64
-          unzip -o "macOS/*.zip"        -d dest/lib/macOS
+          unzip -o "win_x86_64_asan/*.zip" -d dest/lib_asan/win_x86_64
+          unzip -o "win_x86_64/*.zip"      -d dest/lib/win_x86_64
+          unzip -o "linux_x86_64/*.zip"    -d dest/lib/linux_x86_64
+          unzip -o "macOS/*.zip"           -d dest/lib/macOS
 
       - name: Upload Release
         uses: actions/upload-artifact@v4

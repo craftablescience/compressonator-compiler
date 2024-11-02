@@ -167,6 +167,7 @@ jobs:
           path: |
             dest/include/
             dest/lib/
+            dest/lib_asan/
             dest/CMakeLists.txt
             dest/LICENSE
           retention-days: 7

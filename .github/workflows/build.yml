@@ -101,6 +101,7 @@ jobs:
       - name: Create Destination Directories
         run: |
           mkdir win_x86_64
+          mkdir win_x86_64_asan
           mkdir linux_x86_64
           mkdir macOS
           mkdir dest
@@ -110,6 +111,8 @@ jobs:
           mkdir dest/lib/win_x86_64
           mkdir dest/lib/linux_x86_64
           mkdir dest/lib/macOS
+          mkdir dest/lib_asan
+          mkdir dest/lib_asan/win_x86_64
 
       - name: Copy Files
         run: |
@@ -132,7 +135,7 @@ jobs:
             for (const artifact of windowsArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                if (artifact.name.endsWith('(ASan)')) {
+                if (artifact.name.includes('ASan')) {
                     fs.writeFileSync(`${{github.workspace}}/win_x86_64_asan/${artifact.name}.zip`, Buffer.from(download.data));
                 } else {
                     fs.writeFileSync(`${{github.workspace}}/win_x86_64/${artifact.name}.zip`, Buffer.from(download.data));

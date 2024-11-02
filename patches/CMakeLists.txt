@@ -55,6 +55,8 @@ include(cmake/helperfunctions.cmake)
 if (CMP_HOST_WINDOWS)
     add_compile_options(/W4 /wd4201)
     #    add_compile_options(/W4 /WX /wd4201)
+
+    option(CMP_COMPILE_WITH_ASAN "Compile with ASan" OFF)
 elseif(CMP_HOST_LINUX)
     add_compile_options(-Wall)
     #    add_compile_options(-Wall -Werror)
@@ -199,6 +201,11 @@ if (CMP_HOST_WINDOWS)
     add_compile_definitions(_WIN32)
 
     set(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO")
+
+    if (CMP_COMPILE_WITH_ASAN)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /fsanitize=address")
+    endif()
 else()
     if (CMP_HOST_LINUX)
         #gltf code needs _LINUX define

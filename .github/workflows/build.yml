@@ -1,10 +1,11 @@
 name: Build
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
-  # nothing here
+    # nothing here
 
 jobs:
   build:
@@ -13,7 +14,6 @@ jobs:
       matrix:
         os:
           - { id: windows-latest, name: Windows }
-          - { id: windows-latest, name: Windows (ASan) }
           - { id: ubuntu-latest, name: Linux }
           - { id: macos-latest, name: macOS }
         build_type: [Debug, Release]
@@ -66,15 +66,9 @@ jobs:
         run: |
           brew install ninja
 
-      - name: Configure CMake [!ASan]
-        if: endsWith(matrix.os.name, '(ASan)') == false
+      - name: Configure CMake
         working-directory: compressonator
         run: cmake -G "Ninja" -B cmake-build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
-
-      - name: Configure CMake [ASan]
-        if: endsWith(matrix.os.name, '(ASan)')
-        working-directory: compressonator
-        run: cmake -G "Ninja" -B cmake-build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_COMPILE_WITH_ASAN=ON
 
       - name: Build
         working-directory: compressonator
@@ -101,18 +95,15 @@ jobs:
       - name: Create Destination Directories
         run: |
           mkdir win_x86_64
-          mkdir win_x86_64_asan
           mkdir linux_x86_64
-          mkdir macOS
+          mkdir macOS_arm64
           mkdir dest
           mkdir dest/cmake
           mkdir dest/include
           mkdir dest/lib
           mkdir dest/lib/win_x86_64
           mkdir dest/lib/linux_x86_64
-          mkdir dest/lib/macOS
-          mkdir dest/lib_asan
-          mkdir dest/lib_asan/win_x86_64
+          mkdir dest/lib/macOS_arm64
 
       - name: Copy Files
         run: |
@@ -135,11 +126,7 @@ jobs:
             for (const artifact of windowsArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                if (artifact.name.includes('ASan')) {
-                    fs.writeFileSync(`${{github.workspace}}/win_x86_64_asan/${artifact.name}.zip`, Buffer.from(download.data));
-                } else {
-                    fs.writeFileSync(`${{github.workspace}}/win_x86_64/${artifact.name}.zip`, Buffer.from(download.data));
-                }
+                fs.writeFileSync(`${{github.workspace}}/win_x86_64/${artifact.name}.zip`, Buffer.from(download.data));
             }
             for (const artifact of linuxArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
@@ -149,16 +136,15 @@ jobs:
             for (const artifact of macOSArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                fs.writeFileSync(`${{github.workspace}}/macOS/${artifact.name}.zip`, Buffer.from(download.data));
+                fs.writeFileSync(`${{github.workspace}}/macOS_arm64/${artifact.name}.zip`, Buffer.from(download.data));
             }
             console.log("Artifact download complete!");
 
       - name: Unzip Artifacts
         run: |
-          unzip -o "win_x86_64_asan/*.zip" -d dest/lib_asan/win_x86_64
           unzip -o "win_x86_64/*.zip"      -d dest/lib/win_x86_64
           unzip -o "linux_x86_64/*.zip"    -d dest/lib/linux_x86_64
-          unzip -o "macOS/*.zip"           -d dest/lib/macOS
+          unzip -o "macOS_arm64/*.zip"     -d dest/lib/macOS_arm64
 
       - name: Upload Release
         uses: actions/upload-artifact@v4
@@ -167,7 +153,6 @@ jobs:
           path: |
             dest/include/
             dest/lib/
-            dest/lib_asan/
             dest/CMakeLists.txt
             dest/LICENSE
           retention-days: 7

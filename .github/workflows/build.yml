@@ -120,7 +120,7 @@ jobs:
       - name: Configure CMake for arm64
         working-directory: compressonator
         run: |
-          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="aarch64-apple-darwin22-gcc" -DCMAKE_CXX_COMPILER="aarch64-apple-darwin22-g++" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
+          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="aarch64-apple-darwin22-clang" -DCMAKE_C_COMPILER_TARGET="aarch64-apple-darwin22" -DCMAKE_CXX_COMPILER="aarch64-apple-darwin22-clang" -DCMAKE_CXX_COMPILER_TARGET="aarch64-apple-darwin22" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
 
       - name: Build for arm64
         working-directory: compressonator
@@ -132,7 +132,7 @@ jobs:
         working-directory: compressonator
         run: |
           rm -rf cmake-build
-          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="x86_64-apple-darwin22-gcc" -DCMAKE_CXX_COMPILER="x86_64-apple-darwin22-g++" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
+          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="x86_64-apple-darwin22-clang" -DCMAKE_C_COMPILER_TARGET="x86_64-apple-darwin22" -DCMAKE_CXX_COMPILER="x86_64-apple-darwin22-clang" -DCMAKE_CXX_COMPILER_TARGET="x86_64-apple-darwin22" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
 
       - name: Build for x86_64
         working-directory: compressonator

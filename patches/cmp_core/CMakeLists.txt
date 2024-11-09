@@ -48,7 +48,8 @@ function(create_cmp_core_library SUFFIX)
     set_target_properties(CMP_Core${SUFFIX} PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
     # Core SIMD options
-    if(APPLE)
+    option(CMP_APPLE_HACK "Disable CPU-dependent specialized libraries" OFF)
+    if(APPLE OR CMP_APPLE_HACK)
         # hack to avoid missing functions at link time
         target_sources(CMP_Core${SUFFIX}
                 PRIVATE

@@ -37,7 +37,7 @@ if (NOT CMP_VERSION_BUILD_NUMBER)
 endif()
 
 # Needs to be above project()
-set(CMAKE_OSX_ARCHITECTURES "arm64")
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 project(Compressonator VERSION ${CMP_VERSION_MAJOR}.${CMP_VERSION_MINOR})
 message("Building Compressonator version ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")

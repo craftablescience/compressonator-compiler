@@ -8,14 +8,13 @@ on:
     # nothing here
 
 jobs:
-  build:
+  build-regular:
     strategy:
       fail-fast: false
       matrix:
         os:
           - { id: windows-latest, name: Windows }
           - { id: ubuntu-latest, name: Linux }
-          - { id: macos-latest, name: macOS }
         build_type: [Debug, Release]
     runs-on: ${{matrix.os.id}}
     steps:
@@ -68,11 +67,13 @@ jobs:
 
       - name: Configure CMake
         working-directory: compressonator
-        run: cmake -G "Ninja" -B cmake-build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        run: |
+          cmake -G "Ninja" -B cmake-build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
 
       - name: Build
         working-directory: compressonator
-        run: cmake --build cmake-build --config ${{matrix.build_type}}
+        run: |
+          cmake --build cmake-build --config ${{matrix.build_type}}
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -82,9 +83,81 @@ jobs:
             compressonator/out/*
           retention-days: 7
 
+  build-macos:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    runs-on: ubuntu-latest
+    container: ghcr.io/shepherdjerred/macos-cross-compiler:latest@sha256:493c4f2beced5b635a0e2a73d5fd1aba77135cf0fa895a28c286c3b1df722b92
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install Programs
+        run: |
+          apt update && apt install -y git cmake curl ninja-build python3
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Checkout GLM
+        uses: actions/checkout@v4
+        with:
+          repository: 'g-truc/glm'
+          path: 'common/lib/ext/glm'
+          submodules: recursive
+
+      - name: Patch Compressonator
+        run: |
+          cp patches/cmp_compressonatorlib/CMakeLists.txt compressonator/cmp_compressonatorlib/CMakeLists.txt
+          cp patches/cmp_core/source/core_simd_apple.cpp  compressonator/cmp_core/source/core_simd_apple.cpp
+          cp patches/cmp_core/CMakeLists.txt              compressonator/cmp_core/CMakeLists.txt
+          cp patches/external/glm/CMakeLists.txt          compressonator/external/glm/CMakeLists.txt
+          cp patches/CMakeLists.txt                       compressonator/CMakeLists.txt
+
+      - name: Configure CMake for arm64
+        working-directory: compressonator
+        run: |
+          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="aarch64-apple-darwin22-gcc" -DCMAKE_CXX_COMPILER="aarch64-apple-darwin22-g++" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
+
+      - name: Build for arm64
+        working-directory: compressonator
+        run: |
+          cmake --build cmake-build --config ${{matrix.build_type}}
+          mv out build-arm64
+
+      - name: Configure CMake for x86_64
+        working-directory: compressonator
+        run: |
+          rm -rf cmake-build
+          cmake -G "Ninja" -B cmake-build -DCMAKE_C_COMPILER="x86_64-apple-darwin22-gcc" -DCMAKE_CXX_COMPILER="x86_64-apple-darwin22-g++" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMP_APPLE_HACK=ON
+
+      - name: Build for x86_64
+        working-directory: compressonator
+        run: |
+          cmake --build cmake-build --config ${{matrix.build_type}}
+          mv out build-x86_64
+
+      - name: Merge Binaries
+        working-directory: compressonator
+        run: |
+          curl -L -O https://raw.githubusercontent.com/craftablescience/lipo-dir-merge/refs/heads/main/lipo-dir-merge.py
+          python3 lipo-dir-merge.py build-arm64 build-x86_64 build-universal2 x86_64-apple-darwin22-lipo
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Compressonator-macOS-${{matrix.build_type}}'
+          path: |
+            compressonator/build-universal2/*
+          retention-days: 7
+
   merge:
     needs:
-      - build
+      - build-regular
+      - build-macos
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -96,14 +169,14 @@ jobs:
         run: |
           mkdir win_x86_64
           mkdir linux_x86_64
-          mkdir macOS_arm64
+          mkdir osx_universal2
           mkdir dest
           mkdir dest/cmake
           mkdir dest/include
           mkdir dest/lib
           mkdir dest/lib/win_x86_64
           mkdir dest/lib/linux_x86_64
-          mkdir dest/lib/macOS_arm64
+          mkdir dest/lib/osx_universal2
 
       - name: Copy Files
         run: |
@@ -136,15 +209,15 @@ jobs:
             for (const artifact of macOSArtifacts) {
                 console.log(`Downloading "${artifact.name}.zip"...`);
                 const download = await github.rest.actions.downloadArtifact({owner: context.repo.owner, repo: context.repo.repo, artifact_id: artifact.id, archive_format: 'zip'});
-                fs.writeFileSync(`${{github.workspace}}/macOS_arm64/${artifact.name}.zip`, Buffer.from(download.data));
+                fs.writeFileSync(`${{github.workspace}}/osx_universal2/${artifact.name}.zip`, Buffer.from(download.data));
             }
             console.log("Artifact download complete!");
 
       - name: Unzip Artifacts
         run: |
-          unzip -o "win_x86_64/*.zip"      -d dest/lib/win_x86_64
-          unzip -o "linux_x86_64/*.zip"    -d dest/lib/linux_x86_64
-          unzip -o "macOS_arm64/*.zip"     -d dest/lib/macOS_arm64
+          unzip -o "win_x86_64/*.zip"     -d dest/lib/win_x86_64
+          unzip -o "linux_x86_64/*.zip"   -d dest/lib/linux_x86_64
+          unzip -o "osx_universal2/*.zip" -d dest/lib/osx_universal2
 
       - name: Upload Release
         uses: actions/upload-artifact@v4

@@ -11,3 +11,13 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/path/to/compressonator/release")
 # This function will link to the correct libraries and make the "Compressonator.h" header file available.
 target_link_compressonator(sample_lib)
 ```
+
+## Credits
+
+Without these lovely third parties the releases section would be 20% less cool:
+
+- The [macOS Cross Compiler](https://github.com/shepherdjerred/macos-cross-compiler) Docker image
+- The [lipo-dir-merge](https://github.com/craftablescience/lipo-dir-merge) Python script
+
+Both of these repositories are licensed under GPLv3, but since they are only used as tools to build
+the release, the contents of this repository can still be licensed under MIT.
